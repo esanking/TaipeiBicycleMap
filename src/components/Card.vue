@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card" style="width: 18rem">
+    <div class="card w-100" @click="setFocus">
       <div class="card-body">
         <h5 class="card-title">{{ store.sna }}</h5>
         <h6 class="card-subtitle mb-2 text-muted">{{ store.sarea }}</h6>
@@ -14,7 +14,7 @@
           <a :href="getHref(store.ar)" class="card-link">{{ store.ar }}</a>
         </p>
         <p>
-          更新時間 {{ store.mday }}
+          更新時間 {{ store.time }}
         </p>
       </div>
     </div>
@@ -31,6 +31,9 @@ export default {
   methods: {
     getHref(address) {
       return `https://www.google.com.tw/maps/place/${address}`;
+    },
+    setFocus() {
+      this.$emit('witchCard', this.store);
     },
   },
 };
