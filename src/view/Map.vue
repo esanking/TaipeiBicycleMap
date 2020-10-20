@@ -1,9 +1,9 @@
 <template>
   <div class="wrap d-flex">
-    <div class="mapLeft col-md-3">
-      <div class="row toolBox bg-primary d-flex justify-content-center">
-        <div class="w-100 header bg-info" style="height: 200px;">
-          <h3 class=" text-white">腳踏車地圖</h3>
+    <div class="mapLeft col-9 col-md-3 bg-primary">
+      <div class="row toolBox  d-flex justify-content-center">
+        <div class="w-100 header bg-info " style="height: 200px;">
+          <h3 class=" text-white">YouBike地圖</h3>
           <div class="townSelect w-75">
             <select class=" custom-select" @change="fliterTown" name="" id="">
               <option value="選擇區域" selected disabled>
@@ -22,9 +22,12 @@
         </div>
       </div>
     </div>
-    <div id="app" class="col-md-9">
+    <div id="app" class="w-100 map">
       <!-- 初始化地圖設定 -->
-      <div class="row">
+      <div class="icon d-flex justify-content-center align-items-center">
+        <i class="fa fa-bars" aria-hidden="true" style="color:#fff; font-size:30px;"></i>
+      </div>
+      <div>
         <l-map
           ref="myMap"
           :zoom="zoom"
@@ -35,19 +38,11 @@
           <!-- 載入圖資 -->
           <l-tile-layer :url="url" :attribution="attribution" />
 
-          <!-- 自己所在位置 -->
+          <!-- 中心點 -->
           <l-marker ref="location" :lat-lng="center">
-            <l-icon
-              :icon-url="icon.type.black"
-              :shadow-url="icon.shadowUrl"
-              :icon-size="icon.iconSize"
-              :icon-anchor="icon.iconAnchor"
-              :popup-anchor="icon.popupAnchor"
-              :shadow-size="icon.shadowSize"
-            />
           </l-marker>
           <!-- 創建標記點 -->
-          <l-marker :lat-lng="[item.lat, item.lng]" v-for="item in fltdData" :key="item.sno"
+          <l-marker :lat-lng="[item.lat, item.lng]" v-for="item in data" :key="item.sno"
               @click="goWitchCard(item)">
             <!-- 標記點樣式判斷 -->
             <l-icon
@@ -66,7 +61,7 @@
               <br>
               可還空位數 {{ item.bemp }}
               <br>
-              地址 {{ item.ar}}
+              地址 <a :href="getHref(item.ar)">{{ item.ar}} </a>
             </l-popup>
           </l-marker>
         </l-map>
@@ -76,8 +71,8 @@
 </template>
 
 <script>
-import 'leaflet.markercluster';
 import Card from '@/components/Card.vue';
+import $ from 'jquery';
 
 export default {
   name: 'Map',
@@ -117,46 +112,26 @@ export default {
     };
   },
   methods: {
+    getHref(address) {
+      return `https://www.google.com.tw/maps/place/${address}`;
+    },
     goWitchCard(store) {
       this.center = [store.lat, store.lng];
       this.store = store;
     },
     fliterTown(e) {
-      // this.data = this.data.filter((item) => item.sarea === city);
       if (e.target.options.selectedIndex > -1) {
         this.fltTown = e.target.options[e.target.options.selectedIndex].dataset.foo;
-        console.log(this.fltTown);
       }
       this.fltdData = this.data.filter((item) => item.sarea === this.fltTown);
       this.center = [this.fltdData[0].lat, this.fltdData[0].lng];
     },
-    // getData() {
-    //   const cors = 'https://cors-anywhere.herokuapp.com/';
-    //   const url = 'https://data.ntpc.gov.tw/api/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A/json/preview';
-    //   // const url = 'https://api.kcg.gov.tw/api/service/get/897e552a-2887-4f6f-a6ee-709f7fbe0ee3';
-    //   // const url = 'http://tbike-data.tainan.gov.tw/Service/StationStatus/Json'
-    //   this.$http.get(`${cors}${url}`)
-    //     .then((res) => {
-    //       console.log(res);
-    //       this.data = res.data;
-    //       console.log(this.data);
-    //       res.data.forEach((item) => this.city.push(item.sarea));
-    //       this.city = this.city.filter((item, index) => this.city.indexOf(item) === index);
-    //       console.log(this.city);
-    //     })
-    //     .catch((req) => {
-    //       console.log(req);
-    //     });
-    // },
   },
   mounted() {
     const cors = 'https://cors-anywhere.herokuapp.com/';
     const url = 'https://data.ntpc.gov.tw/api/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A/json/preview';
-    // const url = 'https://api.kcg.gov.tw/api/service/get/897e552a-2887-4f6f-a6ee-709f7fbe0ee3';
-    // const url = 'http://tbike-data.tainan.gov.tw/Service/StationStatus/Json'
     this.$http.get(`${cors}${url}`)
       .then((res) => {
-        console.log(res);
         this.data = res.data;
         res.data.forEach((item, index) => {
           this.data[index].time = `${item.mday.slice(8, 10)} : ${item.mday.slice(10, 12)}
@@ -164,12 +139,10 @@ export default {
         });
         res.data.forEach((item) => this.town.push(item.sarea));
         this.town = this.town.filter((item, index) => this.town.indexOf(item) === index);
-        console.log(this.town);
-        console.log(this.data);
-      })
-      .catch((req) => {
-        console.log(req);
       });
+    $('.icon').click(() => {
+      $('.mapLeft').toggle();
+    });
   },
   created() {
   },
@@ -177,22 +150,43 @@ export default {
 </script>
 
 <style lang="scss">
-html,
-body {
-  padding: 0;
-  margin: 0;
-}
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-around;
-}
-.toolBox {
-  overflow-y: auto;
-  height: 100vh;
-}
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+  }
+  .mapLeft {
+    overflow: hidden;
+    transition: all 3s;
+  }
+  .map {
+    position: relative;
+  }
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  .toolBox {
+    overflow-y: auto;
+    height: 100vh;
+  }
+  .cardGroup {
+    width: 90%;
+  }
+  .icon {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    height: 60px;
+    width: 60px;
+    background-color: #ccc;
+    z-index: 600;
+    cursor: pointer;
+    transition: 3s;
+  }
 </style>

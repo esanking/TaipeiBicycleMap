@@ -1,24 +1,35 @@
-# bicycle
+# YouBike地圖網站 [DessertWorld](https://esanking.github.io/TaipeiBicycleMap/)
 
-## Project setup
-```
-npm install
-```
+### 功能
+網頁功能：
+* select 選單選擇區域
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+##
+### 使用技術
+* 使用 leaflet.js 與 OpenStreetMap 搭建地圖資料
+* Vue.js
+* Vue CLI 4
+* RWD 響應式畫面
+* jQuery 互動效果
+* ES6
+* Webpack
+* ESlint(aribnb) 程式碼管理
+* Bootstrap 4 及 SCSS 的應用
+* 第三方 Plugin 的運用
+  * leaflet
+  * axios
+  * vue-axios
+  * jQuery
+  * popper.js
+  * Bootstrap 4
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
+### 平台畫面
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+![](https://i.imgur.com/mTdPj6S.png)
+
+
+
+## 聲明
+
+###### 本網站資料採用 [新北市開放平台](https://data.ntpc.gov.tw/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A)，僅用來做為學習用途。
