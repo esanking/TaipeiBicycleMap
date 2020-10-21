@@ -1,9 +1,9 @@
 <template>
   <div class="wrap d-flex">
-    <div class="mapLeft col-9 col-md-3 bg-primary">
-      <div class="row toolBox  d-flex justify-content-center">
+    <div class="mapLeft bg-primary">
+      <div class=" toolBox  d-flex justify-content-center flex-wrap">
         <div class="w-100 header bg-info " style="height: 200px;">
-          <h3 class=" text-white">YouBike地圖</h3>
+          <h3 class=" text-white">TaipeiBicycleMap</h3>
           <div class="townSelect w-75">
             <select class=" custom-select" @change="fliterTown" name="" id="">
               <option value="選擇區域" selected disabled>
@@ -141,7 +141,7 @@ export default {
         this.town = this.town.filter((item, index) => this.town.indexOf(item) === index);
       });
     $('.icon').click(() => {
-      $('.mapLeft').toggle();
+      $('body').toggleClass('open');
     });
   },
   created() {
@@ -157,7 +157,19 @@ export default {
   }
   .mapLeft {
     overflow: hidden;
-    transition: all 3s;
+    transition: all 2s;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 25%;
+    z-index: 600;
+    @media (max-width: 767px) {
+      width: 80%;
+    }
+  }
+  .open .mapLeft {
+    width: 0;
   }
   .map {
     position: relative;
@@ -181,12 +193,18 @@ export default {
   .icon {
     position: absolute;
     top: 50px;
-    left: 0px;
+    left: 25%;
     height: 60px;
     width: 60px;
     background-color: #ccc;
     z-index: 600;
     cursor: pointer;
-    transition: 3s;
+    transition: all 2s;
+    @media (max-width: 767px) {
+      left: 80%;
+    }
+  }
+  .open .icon {
+    left: 0px;
   }
 </style>
