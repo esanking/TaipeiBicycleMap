@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: "/",
+  publicPath: "./",
   // outputDir: "public/live",
   devServer: { //自动打开浏览器
     port: "8080",
