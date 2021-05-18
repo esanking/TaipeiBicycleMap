@@ -42,7 +42,7 @@
           <l-marker ref="location" :lat-lng="center">
           </l-marker>
           <!-- 創建標記點 -->
-          <l-marker :lat-lng="[item.lat, item.lng]" v-for="item in data" :key="item.sno"
+          <l-marker :lat-lng="[item.lat, item.lng]" v-for="item in fltdData" :key="item.sno"
               @click="goWitchCard(item)">
             <!-- 標記點樣式判斷 -->
             <l-icon
