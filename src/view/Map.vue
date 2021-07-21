@@ -1,5 +1,9 @@
 <template>
   <div class="wrap d-flex">
+    <Loading :active.sync="isLoading">
+      <i class="fas fa-biking fa-spin fa-3x"></i>
+      <div class="mt-3"><b>Loading ...</b></div>
+    </Loading>
     <div class="mapLeft bg-primary">
       <div class=" toolBox  d-flex justify-content-center flex-wrap">
         <div class="w-100 header bg-info " style="height: 200px;">
@@ -47,11 +51,9 @@
             <!-- 標記點樣式判斷 -->
             <l-icon
               :icon-url="item.sna === store.sna ? icon.type.gold : icon.type.black"
-              :shadow-url="icon.shadowUrl"
               :icon-size="icon.iconSize"
               :icon-anchor="icon.iconAnchor"
               :popup-anchor="icon.popupAnchor"
-              :shadow-size="icon.shadowSize"
             />
             <!-- 彈出視窗 -->
             <l-popup>
@@ -73,6 +75,8 @@
 <script>
 import Card from '@/components/Card.vue';
 import $ from 'jquery';
+import Bicycle from '@/assets/img/bicycle.png';
+import RunBicycle from '@/assets/img/run_bicycle.png';
 
 export default {
   name: 'Map',
@@ -81,6 +85,7 @@ export default {
   },
   data() {
     return {
+      isLoading: false,
       // 模擬資料
       data: [],
       town: [],
@@ -97,17 +102,12 @@ export default {
       },
       icon: {
         type: {
-          black:
-            'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-black.png',
-          gold:
-            'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
+          black: Bicycle,
+          gold: RunBicycle,
         },
-        shadowUrl:
-          'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
+        iconSize: [50, 50],
         iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41],
+        popupAnchor: [10, -40],
       },
     };
   },
@@ -120,31 +120,40 @@ export default {
       this.store = store;
     },
     fliterTown(e) {
+      this.isLoading = true;
       if (e.target.options.selectedIndex > -1) {
         this.fltTown = e.target.options[e.target.options.selectedIndex].dataset.foo;
       }
       this.fltdData = this.data.filter((item) => item.sarea === this.fltTown);
       this.center = [this.fltdData[0].lat, this.fltdData[0].lng];
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 1000);
+    },
+    getAddress() {
+      this.isLoading = true;
+      const cors = 'https://all-the-cors.herokuapp.com/';
+      const url = 'https://data.ntpc.gov.tw/api/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A/json?page=0&size=1000';
+      this.$http.get(`${cors}${url}`)
+        .then((res) => {
+          this.data = res.data;
+          res.data.forEach((item, index) => {
+            this.data[index].time = `${item.mday.slice(8, 10)} : ${item.mday.slice(10, 12)}
+          : ${item.mday.slice(12, 14)}`;
+          });
+          res.data.forEach((item) => this.town.push(item.sarea));
+          this.town = this.town.filter((item, index) => this.town.indexOf(item) === index);
+          this.isLoading = false;
+        });
     },
   },
   mounted() {
-    const cors = 'https://all-the-cors.herokuapp.com/';
-    const url = 'https://data.ntpc.gov.tw/api/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A/json?page=0&size=1000';
-    this.$http.get(`${cors}${url}`)
-      .then((res) => {
-        this.data = res.data;
-        res.data.forEach((item, index) => {
-          this.data[index].time = `${item.mday.slice(8, 10)} : ${item.mday.slice(10, 12)}
-         : ${item.mday.slice(12, 14)}`;
-        });
-        res.data.forEach((item) => this.town.push(item.sarea));
-        this.town = this.town.filter((item, index) => this.town.indexOf(item) === index);
-      });
     $('.icon').click(() => {
       $('body').toggleClass('open');
     });
   },
   created() {
+    this.getAddress();
   },
 };
 </script>
@@ -157,7 +166,7 @@ export default {
   }
   .mapLeft {
     overflow: hidden;
-    transition: all 2s;
+    transition: all 1s;
     position: absolute !important;
     top: 0;
     left: 0;
@@ -199,7 +208,7 @@ export default {
     background-color: #ccc;
     z-index: 600;
     cursor: pointer;
-    transition: all 2s;
+    transition: all 1s;
     @media (max-width: 767px) {
       left: 80%;
     }

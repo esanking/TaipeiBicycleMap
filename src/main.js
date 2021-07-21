@@ -1,9 +1,11 @@
 import Vue from 'vue';
 import axios from 'axios';
 import VueAxios from 'vue-axios';
+import Loading from 'vue-loading-overlay';
 
 import 'bootstrap';
 import '@fortawesome/fontawesome-free/css/all.css';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 import {
   LMap,
@@ -22,6 +24,7 @@ Vue.component('l-tile-layer', LTileLayer);
 Vue.component('l-marker', LMarker);
 Vue.component('l-popup', LPopup);
 Vue.component('l-icon', LIcon);
+Vue.component('Loading', Loading);
 
 Vue.use(VueAxios, axios);
 Vue.config.productionTip = false;
