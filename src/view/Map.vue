@@ -132,7 +132,7 @@ export default {
     },
     getAddress() {
       this.isLoading = true;
-      const cors = 'https://all-the-cors.herokuapp.com/';
+      const cors = 'https://cors-anywhere.herokuapp.com/';
       const url = 'https://data.ntpc.gov.tw/api/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A/json?page=0&size=1000';
       this.$http.get(`${cors}${url}`)
         .then((res) => {
